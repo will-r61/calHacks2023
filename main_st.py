@@ -33,6 +33,8 @@ if st.session_state['input_type'] == "Image":
 
         image = Image.frombytes('RGBA', (128,128), bytes_data)
 
+        st.session_state['object_description'] = image
+
 
 if st.session_state['input_type'] == "Text":
     object_description = st.text_input("Describe your object here!")
@@ -43,6 +45,7 @@ if st.session_state['input_type'] == "Text":
 start_initialized = st.button('Start demo!')
 
 if start_initialized:
+    ## TODO update for image input
     search(st.session_state['object_description'])
 
 def search(text_prompt):
@@ -58,7 +61,7 @@ def search(text_prompt):
     TEXT_PROMPT = text_prompt
 
     # set box and text threshold values
-    BOX_TRESHOLD = 0.35
+    BOX_TRESHOLD = 0.25
     TEXT_TRESHOLD = 0.25
     PREDICTION_THRESHOLD = 0.4
 
