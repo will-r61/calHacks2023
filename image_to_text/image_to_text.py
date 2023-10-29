@@ -1,7 +1,5 @@
-import requests
 import pickle
 from PIL import Image
-from transformers import BlipProcessor, BlipForConditionalGeneration
 
 
 class ImageToText:
@@ -13,9 +11,9 @@ class ImageToText:
             self.image = im.convert('RGB')
 
         # Unpickle model and processor
-        with open('pkl_files/model.pkl', 'rb') as model_file:
+        with open('image_to_text/pkl_files/model.pkl', 'rb') as model_file:
             self.model = pickle.load(model_file)
-        with open('pkl_files/processor.pkl', 'rb') as processor_file:
+        with open('image_to_text/pkl_files/processor.pkl', 'rb') as processor_file:
             self.processor = pickle.load(processor_file)
 
 

@@ -4,6 +4,7 @@ __pycache__/
 *$py.class
 pkl_files/
 images/
+.DS_Store
 
 # C extensions
 *.so
