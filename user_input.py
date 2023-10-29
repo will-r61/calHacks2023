@@ -7,8 +7,4 @@ def main():
         description = get_image_description(image_filename)
     else:
         description = input("Please provide a description of your object: ")
-    print(description)
     return description
-
-
-main()
