@@ -16,11 +16,22 @@ st.title("Welcome to the Vision Voyager Demo!")
 input_type = st.radio('How would you like to describe your object?', ['Text', 'Image'])
 st.session_state['input_type'] = input_type
 
+def get_image_path(img):
+    # Create a directory and save the uploaded image.
+    file_path = f"data/uploadedImages/{img.name}"
+    os.makedirs(os.path.dirname(file_path), exist_ok=True)
+    with open(file_path, "wb") as img_file:
+        img_file.write(img.getbuffer())
+    return file_path
 
 if st.session_state['input_type'] == "Image":
     uploaded_file = st.file_uploader("Upload your image here!")
     if 'uploaded_file' not in st.session_state:
         st.session_state['uploaded_file'] = uploaded_file
+
+        bytes_data = get_image_path(uploaded_file)
+
+        image = Image.frombytes('RGBA', (128,128), bytes_data)
 
 
 if st.session_state['input_type'] == "Text":
@@ -102,8 +113,6 @@ def search(text_prompt):
         cv2.imwrite('model_output.jpg', out_frame)
         st.image('model_output.jpg')
 
-        print(logits)
-
         if logits.numel() == 0:
             pass
         else:
@@ -122,5 +131,3 @@ def search(text_prompt):
                 break
     cap.release()
     cv2.destroyAllWindows()
-
-
