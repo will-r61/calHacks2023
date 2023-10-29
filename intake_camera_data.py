@@ -69,6 +69,8 @@ def main(text_prompt):
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
 
+        print(logits)
+
         if logits.numel() == 0:
             pass
         else:
@@ -79,7 +81,7 @@ def main(text_prompt):
                     print("Item found!")
                     print("Item is: " + TEXT_PROMPT)
                     print("Confidence: " + str(value))
-                    print("Box: " + str(boxes))
+                    #print("Box: " + str(boxes))
                     print("Text: " + str(phrases))
                     cv2.imwrite('item_found.jpg', out_frame)
                     break
