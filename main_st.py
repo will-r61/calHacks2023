@@ -3,8 +3,7 @@ from intake_camera_data import main as search
 import streamlit as st
 import os
 import cv2
-import numpy as np
-import torch
+import requests
 from PIL import Image
 import groundingdino.datasets.transforms as T
 from groundingdino.util.inference import load_model, load_image, predict, annotate
@@ -44,11 +43,12 @@ if st.session_state['input_type'] == "Text":
 #item_description = main()
 start_initialized = st.button('Start demo!')
 
-if start_initialized:
-    ## TODO update for image input
-    search(st.session_state['object_description'])
+#if start_initialized:
+#    search()
 
-def search(text_prompt):
+if start_initialized:
+
+    text_prompt = st.session_state['object_description']
 
     HOME = os.getcwd()
     # set model configuration file path
@@ -61,11 +61,11 @@ def search(text_prompt):
     TEXT_PROMPT = text_prompt
 
     # set box and text threshold values
-    BOX_TRESHOLD = 0.25
-    TEXT_TRESHOLD = 0.25
-    PREDICTION_THRESHOLD = 0.4
+    BOX_TRESHOLD = 0.3
+    TEXT_TRESHOLD = 0.2
+    PREDICTION_THRESHOLD = 0.3
 
-    model = load_model("GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py", "weights/groundingdino_swint_ogc.pth")
+    model = load_model("GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py", "GroundingDINO/weights/groundingdino_swint_ogc.pth")
 
     item_not_found = True
 
@@ -76,6 +76,9 @@ def search(text_prompt):
 
         # Face recognition and opencv setup
         cap = cv2.VideoCapture(URL + ":81/stream")
+
+        requests.get(URL + "/control?var=framesize&val={}".format(10))
+        requests.get(URL + "/control?var=quality&val={}".format(10))
         
         ret, frame = cap.read()
         print('reading from stream')
@@ -93,9 +96,10 @@ def search(text_prompt):
         image_transformed, _ = transform(image_source, None)
         
         image_source.save('test.jpg')
-        st.image('test.jpg')
+        st.image('test.jpg', 'Captured Image')
 
         # predict boxes, logits, phrases
+        print(TEXT_PROMPT)
         boxes, logits, phrases = predict(
         model=model, 
         image=image_transformed, 
@@ -109,12 +113,13 @@ def search(text_prompt):
         # display the output
         out_frame = cv2.cvtColor(annotated_frame, cv2.COLOR_BGR2RGB)
         cv2.imshow('frame', out_frame)
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
         
         #save the output to JPG
         cv2.imwrite('model_output.jpg', out_frame)
-        st.image('model_output.jpg')
+        st.image('model_output.jpg', f'Identified Objects, Confidence: {logits}')
+
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
 
         if logits.numel() == 0:
             pass
@@ -129,6 +134,7 @@ def search(text_prompt):
                     #print("Box: " + str(boxes))
                     print("Text: " + str(phrases))
                     cv2.imwrite('item_found.jpg', out_frame)
+                    st.success('Item Found!')
                     break
             if item_not_found == False:
                 break
