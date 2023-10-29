@@ -22,7 +22,7 @@ def main(text_prompt):
     # set box and text threshold values
     BOX_TRESHOLD = 0.35
     TEXT_TRESHOLD = 0.25
-    PREDICTION_THRESHOLD = 0.4
+    PREDICTION_THRESHOLD = 0.6
 
     model = load_model("GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py", "GroundingDINO/weights/groundingdino_swint_ogc.pth")
 
